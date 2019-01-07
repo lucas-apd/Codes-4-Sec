@@ -33,8 +33,6 @@ key2_age = "Newer"
 curdate = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
 currentd = time.mktime(datetime.datetime.strptime(curdate, "%Y-%m-%d %H:%M:%S").timetuple())
 
-
-
 def enable_key(dkey, iamuser):
     iam.update_access_key(UserName=iamuser, AccessKeyId=dkey, Status="Active")
     print (dkey + " has been Enabled.")
@@ -156,50 +154,44 @@ def choice_key(iamuser):
 
                 elif c == 'N': out()
 
-#Creating iam session
+session = Session()
+credentials = session.get_credentials()
+current_credentials = credentials.get_frozen_credentials()
+iam = boto3.client('iam')
 
-try:
-    session = Session()
-    credentials = session.get_credentials()
-    current_credentials = credentials.get_frozen_credentials()
-    iam = boto3.client('iam')
+keys = iam.list_access_keys(UserName= iamuser)
 
-    keys = iam.list_access_keys(UserName= iamuser)
+for key in keys['AccessKeyMetadata']:
+        if key['Status']=='Inactive':
+            total = total + 1
+            inactive = inactive + 1
+            dkey = key['AccessKeyId']
+        if key['Status']=='Active':total = total + 1
 
-    for key in keys['AccessKeyMetadata']:
-            if key['Status']=='Inactive':
-                total = total + 1
-                inactive = inactive + 1
-                dkey = key['AccessKeyId']
-            if key['Status']=='Active':total = total + 1
+key1_id = keys['AccessKeyMetadata'][0]['AccessKeyId']
+key1_st = keys['AccessKeyMetadata'][0]['Status']
+key1_dt = keys['AccessKeyMetadata'][0]['CreateDate']
+key1_dt = key1_dt.strftime("%Y-%m-%d %H:%M:%S")
+adate1 = time.mktime(datetime.datetime.strptime(key1_dt, "%Y-%m-%d %H:%M:%S").timetuple())
+key1_days = (currentd - adate1)/60/60/24
+since1 = (int(round(key1_days)))
 
-    key1_id = keys['AccessKeyMetadata'][0]['AccessKeyId']
-    key1_st = keys['AccessKeyMetadata'][0]['Status']
-    key1_dt = keys['AccessKeyMetadata'][0]['CreateDate']
-    key1_dt = key1_dt.strftime("%Y-%m-%d %H:%M:%S")
-    adate1 = time.mktime(datetime.datetime.strptime(key1_dt, "%Y-%m-%d %H:%M:%S").timetuple())
-    key1_days = (currentd - adate1)/60/60/24
-    since1 = (int(round(key1_days)))
+oldkey = key1_id
 
-    oldkey = key1_id
+if total > 1:
+    newkey = key2_id
+    key2_id = keys['AccessKeyMetadata'][1]['AccessKeyId']
+    key2_st = keys['AccessKeyMetadata'][1]['Status']
+    key2_dt = keys['AccessKeyMetadata'][1]['CreateDate']
+    key2_dt = key2_dt.strftime("%Y-%m-%d %H:%M:%S")
+    adate2 = time.mktime(datetime.datetime.strptime(key2_dt, "%Y-%m-%d %H:%M:%S").timetuple())
+    key2_days = (currentd - adate2)/60/60/24
+    since2 = (int(round(key2_days)))
 
-    if total > 1:
-        newkey = key2_id
-        key2_id = keys['AccessKeyMetadata'][1]['AccessKeyId']
-        key2_st = keys['AccessKeyMetadata'][1]['Status']
-        key2_dt = keys['AccessKeyMetadata'][1]['CreateDate']
-        key2_dt = key2_dt.strftime("%Y-%m-%d %H:%M:%S")
-        adate2 = time.mktime(datetime.datetime.strptime(key2_dt, "%Y-%m-%d %H:%M:%S").timetuple())
-        key2_days = (currentd - adate2)/60/60/24
-        since2 = (int(round(key2_days)))
-
-        if adate1 > adate2:
-            oldkey = key2_id
-            newkey = key1_id
-            key1_age = "Newer"
-            key2_age = "Older"
-
-except ClientError as e:
-    print ("Account %s cannot be found." % iamuser)
+    if adate1 > adate2:
+        oldkey = key2_id
+        newkey = key1_id
+        key1_age = "Newer"
+        key2_age = "Older"
 
 choice_key(iamuser)
