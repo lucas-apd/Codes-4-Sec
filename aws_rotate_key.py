@@ -72,7 +72,7 @@ def choice_key(iamuser, access_key):
     print("\t1. " + key1_id + " =" + key1_age + " ( Created " + str(since1) + " days ago. )")
 
     if total > 1:
-        print("\t1. " + key2_id + " =" + key2_age + " ( Created " + str(since2) + " days ago. )")
+        print("\t2. " + key2_id + " =" + key2_age + " ( Created " + str(since2) + " days ago. )")
 
     n = "1"
 
