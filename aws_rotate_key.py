@@ -1,4 +1,3 @@
-# Find the ACCESS_KEY_ID Owner
 # Requirements: awscli, python3, boto3
 # by github.com/Lucas-L-Alcantara
 #.
