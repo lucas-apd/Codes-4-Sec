@@ -100,7 +100,7 @@ def out():
 def choice_key(iamuser):
 
     print("\n------------------------- START -------------------------")
-    print("\nYour are working with that key >> " + current_credentials.access_key + "\n")
+    print("\nYou are working with that key >> " + current_credentials.access_key + "\n")
     print("\tList of available keys for " + iamuser + ":\n")
     print("\t1. " + key1_id + " (Status: " + key1_st + " - Created: " + str(key1_dt) + " - Days: " + str(since1) + " = " + key1_age + " )")
 
