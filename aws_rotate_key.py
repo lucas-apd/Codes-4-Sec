@@ -37,7 +37,7 @@ def rotate_key(iamuser, access_key):
         a = input("\nWARN! Confirm do rotate the key %s [Y/N]? " % access_key)
         a = str.capitalize(a)
         if a == 'Y':
-            iam.delete_access_key(UserName=iamuser, AccessKeyId=oldkey)
+            iam.delete_access_key(UserName=iamuser, AccessKeyId=access_key)
             access_key_metadata = iam.create_access_key(UserName=iamuser)['AccessKey']
             access_key = access_key_metadata['AccessKeyId']
             secret_key = access_key_metadata['SecretAccessKey']
