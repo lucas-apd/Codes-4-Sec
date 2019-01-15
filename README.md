@@ -13,7 +13,12 @@ Scripts and tools for cybersecurity professionals
 [Search for aws access Key owner using ID](https://github.com/Lucas-L-Alcantara/Codes-4-Sec/blob/master/aws_find_key_owner.py)
 
 
-[Manage keys for a specified user](https://github.com/Lucas-L-Alcantara/Codes-4-Sec/blob/master/aws_manage_keys.py)
+[Manage access keys for a specified user](https://github.com/Lucas-L-Alcantara/Codes-4-Sec/blob/master/aws_manage_keys.py)
+
+
+[List aws ec2 instances with public IP and port](https://github.com/Lucas-L-Alcantara/Codes-4-Sec/blob/master/aws_public_ec2_ports.py)
+
+
 
 **Third Party Codes:**
 
