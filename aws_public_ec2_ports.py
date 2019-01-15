@@ -4,7 +4,7 @@
 #.
 #..
 #...
-# Script for list aws ec2 instances with public port
+# Script for list aws ec2 instances with public ip and port
 
 import boto3
 import json
