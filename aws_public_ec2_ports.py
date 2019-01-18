@@ -5,12 +5,10 @@
 #..
 #...
 # Script for list aws ec2 instances with public ip and port
-
 import boto3
 import json
 from collections import defaultdict
 from prettytable import PrettyTable
-
 
 
 x = PrettyTable()
@@ -26,13 +24,18 @@ running_instances = ec2r.instances.filter(Filters=[{
     'Name': 'instance-state-name',
     'Values': ['running']}])
 
+
 ec2info = defaultdict()
 
 for instance in running_instances:
-	
-	for tag in instance.tags:
-		if 'Name'in tag['Key']:
-			name = tag['Value']
+	#name = instance.id	
+	name = "Null"
+	if instance.tags is not None:
+		for tag in instance.tags:
+			if tag['Key'] == 'Name':			
+				name = tag['Value']
+
+
 
 		
 	if instance.public_ip_address is not None:
@@ -64,11 +67,12 @@ for instance in running_instances:
 					if ip_proto != 'icmp':
 						open_ports.append(cidr_ports)
 	 
-			
-		for s in sgs:
+		if len(sgs):
+			sgl = (', '.join(str(s) for s in sgs))
+		#for s in sgs:
 			if len(open_ports):
 					ports = (', '.join(str(p) for p in open_ports))
-					x.add_row([name, instance.id, s, instance.private_ip_address ,instance.public_ip_address, ports])
+					x.add_row([name, instance.id, sgl, instance.private_ip_address ,instance.public_ip_address, ports])
         
 print("\n------------------------------------------------")
 print(" Public Instances from ", acc_name, " Account:")
