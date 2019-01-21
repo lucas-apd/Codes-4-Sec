@@ -4,7 +4,8 @@
 #.
 #..
 #...
-# Script for list aws ec2 instances with public port
+# Script for list aws ec2 instances with public port (All regions)
+# if -p was not set, default aws profile will be used
 
 import boto3
 import json
