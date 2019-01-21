@@ -52,6 +52,7 @@ try:
 
 		for instance in running_instances:
 			
+
 			name = "Null"
 			if instance.tags is not None:
 				for tag in instance.tags:
@@ -59,6 +60,9 @@ try:
 						name = tag['Value']
 
 				
+				
+				
+
 			if instance.public_ip_address is not None:
 				
 				sgs=[]
@@ -68,28 +72,30 @@ try:
 					sg_id=instance.security_groups[i]['GroupId']
 					sgs.append(sg_id)
 				
+					
+					
 					open_ports = []	
-				
-				sg = ec2r.SecurityGroup(sg_id)
+					
+					sg = ec2r.SecurityGroup(sg_id)
 
-				for i in range(len(sg.ip_permissions)):
-					to_port = ''
-					ip_proto = ''
-					if 'ToPort' in sg.ip_permissions[i]:
-						to_port = sg.ip_permissions[i]['ToPort']
-					if 'IpProtocol' in sg.ip_permissions[i]:
-						ip_proto = sg.ip_permissions[i]['IpProtocol']
-						if '-1' in ip_proto:
-							ip_proto = 'All'
-					for j in range(len(sg.ip_permissions[i]['IpRanges'])):
-						cidr_ports = "%s" % (to_port)
-			
-						if sg.ip_permissions[i]['IpRanges'][j]['CidrIp'] == '0.0.0.0/0':
+					for i in range(len(sg.ip_permissions)):
+						to_port = ''
+						ip_proto = ''
+						if 'ToPort' in sg.ip_permissions[i]:
+							to_port = sg.ip_permissions[i]['ToPort']
+						if 'IpProtocol' in sg.ip_permissions[i]:
+							ip_proto = sg.ip_permissions[i]['IpProtocol']
+							if '-1' in ip_proto:
+								ip_proto = 'All'
+						for j in range(len(sg.ip_permissions[i]['IpRanges'])):
+							cidr_ports = "%s" % (to_port)
+							
+							if sg.ip_permissions[i]['IpRanges'][j]['CidrIp'] == '0.0.0.0/0':
+								
+								if ip_proto != 'icmp':
 
-							if ip_proto != 'icmp':
-								open_ports.append(cidr_ports)
-
-				if len(sgs):
+									open_ports.append(cidr_ports)
+									
 					sgl = (', '.join(str(s) for s in sgs))
 				
 					if len(open_ports):
