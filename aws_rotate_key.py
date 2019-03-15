@@ -79,12 +79,15 @@ def choice_key(iamuser, access_key):
     while n != '1' or '2':
         if total > 1:
             n = input("\nWhich key you want to rotate? [1/2]? ")
-        if n == '1':
-            access_key=key1_id
+            if n == '1':
+                access_key=key1_id
+                rotate_key(iamuser, access_key)
+            if n == '2':
+                access_key=key2_id
+                rotate_key(iamuser, access_key)
+        else: 
             print("\n \t Account %s has only one key \n" % iamuser)
-            rotate_key(iamuser, access_key)
-        if n == '2':
-            access_key=key2_id
+            access_key=key1_id
             rotate_key(iamuser, access_key)
 
 
