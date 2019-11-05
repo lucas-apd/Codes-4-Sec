@@ -7,8 +7,6 @@
 
 session = Session()
 credentials = session.get_credentials()
-
 current_credentials = credentials.get_frozen_credentials()
-print("Your Current Credential:")
-print('Access: ' + current_credentials.access_key)
-print('Secret: ' + current_credentials.secret_key)
+print(f"Your Current Credential:\n Access: {current_credentials.access_key} \n Secret: {current_credentials.secret_key}")
+
