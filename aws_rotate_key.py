@@ -1,9 +1,10 @@
-# Requirements: awscli, python3, boto3
-# by github.com/Lucas-L-Alcantara
+# Requirements: awscli, python3, boto3, argparse.
 #.
 #..
 #...
-# Script for rotate aws iam access key
+# Script for rotate aws access/secret key
+# by github.com/Lucas-L-Alcantara
+
 from boto3 import Session
 from boto3 import client
 from argparse import ArgumentParser
@@ -12,34 +13,33 @@ from os import popen
 
 DAYS_THRESHOLD = 180
 
-
 def get_keys(iamuser):
     all_keys = []
     try:
         session = Session()
         credentials = session.get_credentials()
         credentials = credentials.get_frozen_credentials()
-        print(f'\nAccess em uso: {credentials.access_key}')
+        print(f"\nAccess em uso: {credentials.access_key}")
         iam = client('iam')
         keys = iam.list_access_keys(UserName=iamuser)
     except Exception as e:
         print('Não foi possível conectar à AWS.')
         print('Erro:', e)
         exit()
-
+        
     for key in keys['AccessKeyMetadata']:
         user_key = {}
-
+        
         if key['Status'] != 'Active':
             continue
-
-        user_key['Id'] = key['AccessKeyId']
+            
+        user_key['Id']=key['AccessKeyId']
         user_key['days'] = (datetime.now(key['CreateDate'].tzinfo) - key['CreateDate']).days
-
+        
         new_access_key = None
 
         if int(user_key['days']) >= DAYS_THRESHOLD:
-            print('\n Eita porra! Essa já poderia ser rotacionada hein? \n'
+            print('\n Eita porra! Essa já poderia ser rotacionada, hein? \n'
                   f" \n\tAccess ID: {user_key['Id']} \t Idade (dias): {user_key['days']}")
             new_access_key = rotate_key(iamuser, str(key['AccessKeyId']))
             if new_access_key:
@@ -86,6 +86,7 @@ def set_key (access_key, secret_key):
         elif s == 'N':
             break
 
+
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-u', '--username', help='Example: aws.manage.keys.py -u <username>', required=True)
@@ -94,4 +95,3 @@ if __name__ == '__main__':
     iamuser = args.username
 
     get_keys(iamuser)
-
