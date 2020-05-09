@@ -34,46 +34,49 @@ def get_region(profile):
     session = Session(profile_name=profile)
     acc_name = session.client('iam').list_account_aliases()[
         'AccountAliases'][0]
-    print('\n Account:', acc_name, '\n')
+    #print('\n Account:', acc_name, '\n')
 
     regions = session.get_available_regions('rds')
+
+    rds_dec = {}
 
     for region in regions:
         try:
             session = Session(profile_name=profile, region_name=region)
             client = session.client('rds')
             response = client.describe_db_instances()
-            rds_counter = get_region_rds(response)
+            rds_counter, rds_list = get_region_rds(response)
 
             if rds_counter.get_total_db() > 0:
-                print(rds_counter.get_total_db(), 'dbs in', region)
+                rds_dec[region] = rds_list
+                #print(rds_counter.get_not_encrypted_db(), ' not encrypted dbs in', region , f"\n{rds_list}\n")
 
             total_enc = total_enc + rds_counter.get_encrypted_db()
             total_dec = total_dec + rds_counter.get_not_encrypted_db()
-        except ClientError as error:
-            print(error)
 
-    print("\n Encrypted DB's: {}/{}".format(total_enc, (total_enc+total_dec)))
+        except ClientError as error:
+            pass
+
+    rds_dec['Total'] = f"{total_dec}/{total_enc+total_dec}"
+    print(f"Decrypted DBs by Region:\n {rds_dec}")
 
 
 def get_region_rds(response):
-
+    notenc = []
     rds_counter = RDSCounter()
 
     for instance in response['DBInstances']:
 
-        # db_instance_name = instance['DBInstanceIdentifier']
-        # db_type = instance['DBInstanceClass']
-        # db_storage = instance['AllocatedStorage']
-        # db_engine = instance['Engine']
+        db_instance_name = instance['DBInstanceIdentifier']
         db_encrypt = instance['StorageEncrypted']
 
         if db_encrypt:
             rds_counter.add_encrypted_db()
         else:
             rds_counter.add_not_encrypted_db()
+            notenc.append(db_instance_name)
 
-    return rds_counter
+    return rds_counter, notenc
 
 
 if __name__ == '__main__':
