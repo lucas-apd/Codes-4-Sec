@@ -34,7 +34,7 @@ def get_region(profile):
     session = Session(profile_name=profile)
     acc_name = session.client('iam').list_account_aliases()[
         'AccountAliases'][0]
-    #print('\n Account:', acc_name, '\n')
+    print('\n Account:', acc_name, '\n')
 
     regions = session.get_available_regions('rds')
 
@@ -49,8 +49,7 @@ def get_region(profile):
 
             if rds_counter.get_total_db() > 0:
                 rds_dec[region] = rds_list
-                #print(rds_counter.get_not_encrypted_db(), ' not encrypted dbs in', region , f"\n{rds_list}\n")
-
+              
             total_enc = total_enc + rds_counter.get_encrypted_db()
             total_dec = total_dec + rds_counter.get_not_encrypted_db()
 
