@@ -1,82 +1,37 @@
 from argparse import ArgumentParser
 from boto3 import Session
-from dataclasses import dataclass
 from botocore.exceptions import ClientError
 
 
-@dataclass
-class RDSCounter:
-
-    encrypted_db: int = 0
-    not_encrypted_db: int = 0
-
-    def add_encrypted_db(self):
-        self.encrypted_db += 1
-
-    def add_not_encrypted_db(self):
-        self.not_encrypted_db += 1
-
-    def get_encrypted_db(self):
-        return self.encrypted_db
-
-    def get_not_encrypted_db(self):
-        return self.not_encrypted_db
-
-    def get_total_db(self):
-        return self.encrypted_db + self.not_encrypted_db
-
-
-def get_region(profile):
-
-    total_enc = 0
-    total_dec = 0
+def get_aws_regions(profile):
 
     session = Session(profile_name=profile)
-    acc_name = session.client('iam').list_account_aliases()[
-        'AccountAliases'][0]
-    print('\n Account:', acc_name, '\n')
+    return session.get_available_regions('rds')
 
-    regions = session.get_available_regions('rds')
+def get_not_encrypted_rds(profile, regions):
 
-    rds_dec = {}
+    dec_rds_by_region = {}
 
-    for region in regions:
-        try:
-            session = Session(profile_name=profile, region_name=region)
-            client = session.client('rds')
-            response = client.describe_db_instances()
-            rds_counter, rds_list = get_region_rds(response)
+    for region in regions:   
+        decypted_rds_list = get_region_rds_info(profile, region)
+        if decypted_rds_list:
+            dec_rds_by_region[region] = decypted_rds_list
 
-            if rds_counter.get_total_db() > 0:
-                rds_dec[region] = rds_list
-              
-            total_enc = total_enc + rds_counter.get_encrypted_db()
-            total_dec = total_dec + rds_counter.get_not_encrypted_db()
+    for region in dec_rds_by_region:
+        print(f'\nRegion {region} has {len(dec_rds_by_region[region])} not ecrypted RDS: \n {{}}'.format("\n".join(dec_rds_by_region[region])))
 
-        except ClientError as error:
-            pass
-
-    rds_dec['Total'] = f"{total_dec}/{total_enc+total_dec}"
-    print(f"Decrypted DBs by Region:\n {rds_dec}")
-
-
-def get_region_rds(response):
-    notenc = []
-    rds_counter = RDSCounter()
-
-    for instance in response['DBInstances']:
-
-        db_instance_name = instance['DBInstanceIdentifier']
-        db_encrypt = instance['StorageEncrypted']
-
-        if db_encrypt:
-            rds_counter.add_encrypted_db()
-        else:
-            rds_counter.add_not_encrypted_db()
-            notenc.append(db_instance_name)
-
-    return rds_counter, notenc
-
+def get_region_rds_info(profile, region):
+    try:
+        session = Session(profile_name=profile, region_name=region)
+        client = session.client('rds')
+        regions_rds = client.describe_db_instances()
+    except ClientError as error:
+        return None
+    
+    if regions_rds:
+        not_encrypted_rds_list =  [instance['DBInstanceIdentifier'] for instance in regions_rds['DBInstances'] if not instance['StorageEncrypted']]
+    
+    return not_encrypted_rds_list
 
 if __name__ == '__main__':
 
@@ -94,4 +49,4 @@ if __name__ == '__main__':
     else:
         profile = args.profile
 
-    get_region(profile)
+    get_not_encrypted_rds(profile,get_aws_regions(profile))
