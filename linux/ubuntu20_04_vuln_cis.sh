@@ -23,7 +23,7 @@ xdg-open cis-report-$(hostname).html > /dev/null
 
 # Option 2
 sudo apt install -y libopenscap8 xsltproc unzip ansible
-sudo sh -c "echo '- src: https://github.com/florianutz/Ubuntu1804-CIS.git' >> requirements.yml"
+sudo sh -c "echo '- src: https://github.com/florianutz/ubuntu2004_cis.git' >> requirements.yml"
 sudo ansible-galaxy install -p roles -r requirements.yml
 sudo sh -c "cat > harden.yml <<EOF
 - name: Harden Server
