@@ -39,7 +39,7 @@ echo net.ipv4.conf.default.rp_filter=1 &>> /etc/sysctl.conf
 # Check Ubuntu vulnerabilities:
 
 # https://www.open-scap.org/tools/openscap-base/
-#sudo apt install ssg-base ssg-debderived ssg-debian ssg-nondebian ssg-applications libopenscap8 -y
+# sudo apt install ssg-base ssg-debderived ssg-debian ssg-nondebian ssg-applications libopenscap8 -y
 
 # Option 1
 wget https://security-metadata.canonical.com/oval/com.ubuntu.$(lsb_release -cs).usn.oval.xml.bz2
@@ -67,25 +67,4 @@ wget https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CAN_Ubuntu_20-04_LT
 unzip U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
 rm U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
 oscap xccdf  eval --report disa-report-$(hostname).html U_CAN_Ubuntu_20-04_LTS_V1R1_Manual_STIG/U_CAN_Ubuntu_20-04_LTS_STIG_V1R1_Manual-xccdf.xml 
-
-
-# Option 3 
-sudo apt install -y ansible
-sudo sh -c "echo '- src: https://github.com/florianutz/ubuntu2004_cis.git' >> /etc/ansible/requirements.yml"
-cd /etc/ansible/
-sudo ansible-galaxy install -p roles -r /etc/ansible/requirements.yml
-sudo sh -c "cat > /etc/ansible/harden.yml <<EOF
-- name: Harden Server
-  hosts: localhost
-  connection: local
-  become: yes
-
-  roles:
-    - ubuntu2004_cis
-    
-EOF
-"
-sudo ansible-playbook /etc/ansible/harden.yml
-
-
 
