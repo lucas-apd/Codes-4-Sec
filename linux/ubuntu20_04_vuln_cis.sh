@@ -49,7 +49,7 @@ oscap oval eval --report vuln-report-$(hostname).html com.ubuntu.$(lsb_release -
 xdg-open vuln-report-$(hostname).html > /dev/null
  
 
-# Check Ubuntu cis compliance:
+# Check Ubuntu compliance report:
 # Option 1
 
 wget https://github.com/ComplianceAsCode/content/releases/download/v0.1.56/scap-security-guide-0.1.56-oval-510.zip
