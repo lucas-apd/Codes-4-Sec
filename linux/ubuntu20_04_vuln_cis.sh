@@ -2,11 +2,10 @@
 
 # Check Ubuntu 20.04 Workstation:
 # https://www.open-scap.org/tools/openscap-base/
-
+#sudo apt install ssg-base ssg-debderived ssg-debian ssg-nondebian ssg-applications libopenscap8 -y
 # Check Ubuntu vulnerabilities:
 
 # Option 1
-sudo apt install libopenscap8
 wget https://security-metadata.canonical.com/oval/com.ubuntu.$(lsb_release -cs).usn.oval.xml.bz2
 bunzip2 com.ubuntu.$(lsb_release -cs).usn.oval.xml.bz2
 rm com.ubuntu.$(lsb_release -cs).usn.oval.xml.bz2
@@ -15,9 +14,8 @@ xdg-open vuln-report-$(hostname).html > /dev/null
  
 
 # Check Ubuntu cis compliance:
-
 # Option 1
-sudo apt install libopenscap8
+
 wget https://github.com/ComplianceAsCode/content/releases/download/v0.1.56/scap-security-guide-0.1.56-oval-510.zip
 unzip scap-security-guide-0.1.56-oval-510.zip
 rm scap-security-guide-0.1.56-oval-510.zip
