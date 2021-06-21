@@ -59,8 +59,10 @@ oscap oval eval --report cis-report-$(hostname).html scap-security-guide-0.1.56-
 xdg-open cis-report-$(hostname).html > /dev/null
  
  
-# Option 2 DISA
+# Option 2 DISA (todo)
 # https://nvd.nist.gov/ncp/checklist/992/download/6825
+#https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cunix-linux
+#https://nvd.nist.gov/feeds/xml/cpe/dictionary/official-cpe-dictionary_v2.3.xml.gz
 wget https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
 unzip U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
 rm U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
