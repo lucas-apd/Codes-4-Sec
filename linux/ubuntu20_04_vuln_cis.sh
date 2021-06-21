@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Check Ubuntu 20.04 Workstation:
+# https://www.open-scap.org/tools/openscap-base/
 
 # Check Ubuntu vulnerabilities:
 
