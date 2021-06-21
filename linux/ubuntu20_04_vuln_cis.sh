@@ -42,3 +42,29 @@ sudo sh -c "cat > /etc/ansible/harden.yml <<EOF
 EOF
 "
 sudo ansible-playbook /etc/ansible/harden.yml
+
+# Quick Hardening
+
+apt-get update
+apt-get upgrade
+apt-get autoremove
+apt-get autoclean
+apt-get install unattended-upgrades
+dpkg-reconfigure -plow unattended-upgrades
+echo 'APT::Periodic::AutocleanInterval “7”;' &>> /etc/apt/apt.conf.d/20auto-upgrades
+
+# Enable Firewall and set default config:
+ufw --force enable
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow in on lo
+ufw allow out on lo
+ufw reload
+
+# Block IP Spoofing:
+echo ": order bind,hosts" &>> /etc/host.conf
+echo ": nospoof on" &>> /etc/host.conf
+echo net.ipv4.conf.all.rp_filter=1 &>> /etc/sysctl.conf
+echo net.ipv4.conf.default.rp_filter=1 &>> /etc/sysctl.conf
+/etc/rc.d/init.d/network restart
+
