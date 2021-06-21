@@ -25,8 +25,15 @@ oscap oval eval --report cis-report-$(hostname).html scap-security-guide-0.1.56-
 xdg-open cis-report-$(hostname).html > /dev/null
  
  
-# Option 2
+# Option 2 DISA
+# https://nvd.nist.gov/ncp/checklist/992/download/6825
+wget https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
+unzip U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
+rm U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
+oscap xccdf  eval --report disa-report-$(hostname).html U_CAN_Ubuntu_20-04_LTS_V1R1_Manual_STIG/U_CAN_Ubuntu_20-04_LTS_STIG_V1R1_Manual-xccdf.xml 
 
+
+# Option 3 
 sudo apt install -y ansible
 sudo sh -c "echo '- src: https://github.com/florianutz/ubuntu2004_cis.git' >> /etc/ansible/requirements.yml"
 cd /etc/ansible/
