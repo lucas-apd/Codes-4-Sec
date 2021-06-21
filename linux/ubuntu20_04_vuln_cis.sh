@@ -66,6 +66,8 @@ xdg-open cis-report-$(hostname).html > /dev/null
 wget https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
 unzip U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
 rm U_CAN_Ubuntu_20-04_LTS_V1R1_STIG.zip
+wget https://nvd.nist.gov/feeds/xml/cpe/dictionary/official-cpe-dictionary_v2.3.xml.gz
+unzip official-cpe-dictionary_v2.3.xml.gz
 oscap xccdf eval --report stig-report-$(hostname).html --profile MAC-2_Public --results results.xml --cpe official-cpe-dictionary_v2.3.xml U_CAN_Ubuntu_20-04_LTS_V1R1_Manual_STIG/U_CAN_Ubuntu_20-04_LTS_STIG_V1R1_Manual-xccdf.xml
 
 
