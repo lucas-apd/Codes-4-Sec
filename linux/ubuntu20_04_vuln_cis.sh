@@ -5,6 +5,7 @@
 
 # Quick Hardening
 
+# 1 - System configuration
 apt-get update
 apt-get upgrade
 apt-get autoremove
@@ -14,14 +15,7 @@ apt install syslog-ng -y
 dpkg-reconfigure -plow unattended-upgrades
 echo 'APT::Periodic::AutocleanInterval “7”;' &>> /etc/apt/apt.conf.d/20auto-upgrades
 
-# USB guard
-apt install --no-install-recommends usbguard
-usbguard generate-policy > /tmp/rules.conf
-install -m 0600 -o root -g root /tmp/rules.conf /etc/usbguard/rules.conf
-systemctl enable usbguard.service
-systemctl start usbguard.service
-
-# Enable Firewall and set default config:
+# 2 - Enable Firewall and set default config:
 ufw --force enable
 ufw default deny incoming
 ufw default allow outgoing
@@ -29,14 +23,21 @@ ufw allow in on lo
 ufw allow out on lo
 ufw reload
 
-# Block IP Spoofing:
+# 3 - Blocking IP Spoofing:
 echo ": order bind,hosts" &>> /etc/host.conf
 echo ": nospoof on" &>> /etc/host.conf
 echo net.ipv4.conf.all.rp_filter=1 &>> /etc/sysctl.conf
 echo net.ipv4.conf.default.rp_filter=1 &>> /etc/sysctl.conf
 /etc/rc.d/init.d/network restart
 
-# Check Ubuntu vulnerabilities:
+# 4 - USB guard install:
+apt install --no-install-recommends usbguard
+usbguard generate-policy > /tmp/rules.conf
+install -m 0600 -o root -g root /tmp/rules.conf /etc/usbguard/rules.conf
+systemctl enable usbguard.service
+systemctl start usbguard.service
+
+# 5 - Check Ubuntu vulnerabilities:
 
 # https://www.open-scap.org/tools/openscap-base/
 # sudo apt install ssg-base ssg-debderived ssg-debian ssg-nondebian ssg-applications libopenscap8 -y
