@@ -13,15 +13,16 @@ class GetInactiveRepos(gh):
     
     def __init__(self):
       
-        self.DEADLINE_IN_DAYS= 365
-        
+        self.DEADLINE_IN_DAYS = 365
+        GH_ACCOUNT_NAME = "lucas-apd"
+                
         self.progress = False
         load = Thread(target=self.animate)
         load.start()
 
         self.GH_TOKEN = getenv('GITHUB_TOKEN')
         self.GH_ACCOUNT = gh(self.GH_TOKEN, per_page=1000)
-        self.GH_ORG = self.GH_ACCOUNT.get_organization('gbprojectbr')  
+        self.GH_ORG = self.GH_ACCOUNT.get_organization(GH_ACCOUNT_NAME )  
         self.GH_RATE_LIMIT = self.GH_ACCOUNT.get_rate_limit()
 
         try:
