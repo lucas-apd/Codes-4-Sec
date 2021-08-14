@@ -1,19 +1,18 @@
-from github import Github as gh
+# Requirements:
+# pip3 install pygithub
 from os import getenv, name
+from github import Github as gh
 from github import GithubException, RateLimitExceededException, UnknownObjectException
-from requests import Session
 from time import sleep, gmtime
 from datetime import datetime
 from collections import Counter
-from json import dumps, loads
+from json import dumps
 from calendar import timegm
-from github3 import github
 
 
 class GithubOverview(gh):
     
     def __init__(self, orgname):
-
         self.ORG_NAME = getenv('GITHUB_ORG', default=None) # < Export Yout GitHub Org Name env variable! (export GITHUB_ORG='name')
         GH_TOKEN = getenv('GITHUB_TOKEN', default=None) # < Export Yout GitHub Token env variable! (export GITHUB_TOKEN='token')
 
@@ -31,16 +30,10 @@ class GithubOverview(gh):
         
         self.report_exporter(self.org_report)
         
-    
     def health_check(self):
-        sonar_status = self.sonar_request_api("system/health")
-        if not sonar_status or sonar_status and sonar_status['health'] != "GREEN":
-            print("SonarQube Health Check Error")
-            exit()
         if not self.GH_ORG.raw_data or self.GH_ORG.raw_data['login'] != self.ORG_NAME:
             print("Github Health Check Error")
-            exit()          
-        return
+            exit()
 
     def get_org_infos(self):
         org_infos = {}
@@ -111,8 +104,6 @@ class GithubOverview(gh):
     def get_repos_infos(self):
         org_repos_infos = []
 
-        self.sonar_vuln_projects = self.get_sonar_projects()
-
         for repo in self.all_org_repos:
             if repo.archived or repo.size == 0 or repo.fork:
                 continue
@@ -126,11 +117,10 @@ class GithubOverview(gh):
             repo_info["Last_Update"] = self.get_repo_last_update(repo)
             repo_info["Master_Protect"] = self.get_repo_master_protection(repo)
             repo_info["Teams"] = [repo.name for repo in self.safe_query_execute(repo.get_teams)]
-            repo_info["Sonar_Properties"] = self.safe_query_execute(repo.get_contents, path='sonar.properties') != False
             repo_info["Alerts_On"] = self.safe_query_execute(repo.get_vulnerability_alert)
             repo_info["Vulnerabilities"] = "False"
             if repo_info["Alerts_On"]:
-                repo_info["Vulnerabilities"] = self.get_repo_has_vuln(repo) or repo.name in self.sonar_vuln_projects
+                repo_info["Vulnerabilities"] = self.get_repo_has_vuln(repo)
             
             org_repos_infos.append(repo_info)
        
@@ -206,7 +196,6 @@ class GithubOverview(gh):
                 return False
 
     def report_exporter(self,report):
-
         with open(f'github_full_report_{self.ORG_NAME}.json', 'w') as full_report:
             full_report.write(dumps(report,ensure_ascii=False, indent=4, sort_keys=False))
         full_report.close()
