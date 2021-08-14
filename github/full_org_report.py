@@ -16,7 +16,7 @@ class GithubOverview(gh):
         self.ORG_NAME = getenv('GITHUB_ORG', default=None) # < Export Yout GitHub Org Name env variable! (export GITHUB_ORG='name')
         GH_TOKEN = getenv('GITHUB_TOKEN', default=None) # < Export Yout GitHub Token env variable! (export GITHUB_TOKEN='token')
         if not GH_TOKEN or not self.ORG_NAME:
-            print('Todas as variáveis são necessárias: GITHUB_ORG e GITHUB_TOKEN')
+            print('All variables are required: GITHUB_ORG e GITHUB_TOKEN')
             exit()
 
         self.GH_ACCOUNT = gh(GH_TOKEN, per_page=1000)
@@ -115,7 +115,7 @@ class GithubOverview(gh):
             repo_info["Name"] = repo.name
             repo_info["Is_Private"] = repo.private
             repo_info["Readme_Exist"] = self.get_repo_readme_exist(repo)
-            repo_info["Topics"] = self.get_repo_topics(repo)
+            repo_info["Topics"] = [topic for topic in self.safe_query_execute(repo.get_topics)]
             repo_info["Endpoint"] = repo.homepage
             repo_info["Last_Update"] = self.get_repo_last_update(repo)
             repo_info["Master_Protect"] = self.get_repo_master_protection(repo)
@@ -132,16 +132,6 @@ class GithubOverview(gh):
     def get_repo_readme_exist(self,repo):
         repo_readme = self.safe_query_execute(repo.get_readme)
         if not repo_readme or repo_readme.decoded_content.decode() == repo.name or repo_readme.size == 0:
-            return False
-        
-        return True
-
-    def get_repo_topics(self, repo):
-        topics = [topic for topic in self.safe_query_execute(repo.get_topics)]
-        type_topic_exist = any(x in topics for x in ["front","back","mobile","src","team"])
-        status_topic_exist = any(x in topics for x in ["ativo","depreciado","desativado"])
-
-        if not type_topic_exist or not status_topic_exist:
             return False
         
         return True
@@ -186,13 +176,10 @@ class GithubOverview(gh):
                 if self.GH_RATE_LIMIT.search.remaining == 0:
                     search_rate_limit = self.GH_RATE_LIMIT.search
                     reset_timestamp = timegm(search_rate_limit.reset.timetuple())
-                    print(timegm(search_rate_limit.reset.timetuple()), timegm(gmtime()))
-                    print(search_rate_limit.remaining,reset_timestamp - timegm(gmtime()))
-                    
                     sleep_time = reset_timestamp - timegm(gmtime()) + 10
                     if sleep_time < 0:
                         sleep_time = 60
-                    print(sleep_time)
+
                     sleep(sleep_time)
                     return action(**kargs)
             else:
