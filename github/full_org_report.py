@@ -15,6 +15,9 @@ class GithubOverview(gh):
     def __init__(self, orgname):
         self.ORG_NAME = getenv('GITHUB_ORG', default=None) # < Export Yout GitHub Org Name env variable! (export GITHUB_ORG='name')
         GH_TOKEN = getenv('GITHUB_TOKEN', default=None) # < Export Yout GitHub Token env variable! (export GITHUB_TOKEN='token')
+        if not GH_TOKEN or not self.ORG_NAME:
+            print('Todas as variáveis são necessárias: GITHUB_ORG e GITHUB_TOKEN')
+            exit()
 
         self.GH_ACCOUNT = gh(GH_TOKEN, per_page=1000)
         self.GH_ORG = self.GH_ACCOUNT.get_organization(self.ORG_NAME)  
