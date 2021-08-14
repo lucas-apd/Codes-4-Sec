@@ -1,6 +1,7 @@
 # Requirements:
 # sudo apt install python3 python3-pip -y
 # pip3 install boto3
+# export AWS_KMS_KEY_ID="your-key-id-here"
 import logging
 from boto3 import client
 from botocore.exceptions import ClientError
