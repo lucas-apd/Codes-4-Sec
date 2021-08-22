@@ -1,5 +1,6 @@
 # Requirement: pip3 install boto3 
 # Requirement: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html
+# aws configure
 # Usage: empty_delete_bucket.py -b <bucket_name>
 
 from boto3 import resource, client 
