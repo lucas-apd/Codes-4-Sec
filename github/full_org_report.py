@@ -12,7 +12,7 @@ from calendar import timegm
 
 class GithubOverview(gh):
     
-    def __init__(self, orgname):
+    def __init__(self):
         self.ORG_NAME = getenv('GITHUB_ORG', default=None) # < Export Yout GitHub Org Name env variable! (export GITHUB_ORG='name')
         GH_TOKEN = getenv('GITHUB_TOKEN', default=None) # < Export Yout GitHub Token env variable! (export GITHUB_TOKEN='token')
         if not GH_TOKEN or not self.ORG_NAME:
