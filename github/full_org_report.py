@@ -51,6 +51,7 @@ class GithubOverview(gh):
         org_infos["Repos"] = self.get_repos_infos()            
         org_infos["Archived_Repos"] = self.archived_repos
         org_infos["Forked_Repos"] = self.forked_repos
+        org_infos["Vuln_Repos"] = [repo["Name"] for repo in org_infos["Repos"] if repo["Vulnerabilities"] > 0]
 
         return org_infos
 
