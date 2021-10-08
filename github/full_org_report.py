@@ -8,18 +8,18 @@ from datetime import datetime
 from collections import Counter
 from json import dumps
 from calendar import timegm
-
+from requests import post
 
 class GithubOverview(gh):
     
     def __init__(self):
         self.ORG_NAME = getenv('GITHUB_ORG', default=None) # < Export Yout GitHub Org Name env variable! (export GITHUB_ORG='name')
-        GH_TOKEN = getenv('GITHUB_TOKEN', default=None) # < Export Yout GitHub Token env variable! (export GITHUB_TOKEN='token')
-        if not GH_TOKEN or not self.ORG_NAME:
+        self.GH_TOKEN = getenv('GITHUB_TOKEN', default=None) # < Export Yout GitHub Token env variable! (export GITHUB_TOKEN='token')
+        if not self.GH_TOKEN or not self.ORG_NAME:
             print('All variables are required: GITHUB_ORG e GITHUB_TOKEN')
             exit()
 
-        self.GH_ACCOUNT = gh(GH_TOKEN, per_page=1000)
+        self.GH_ACCOUNT = gh(self.GH_TOKEN, per_page=1000)
         self.GH_ORG = self.GH_ACCOUNT.get_organization(self.ORG_NAME)  
         self.GH_RATE_LIMIT = self.GH_ACCOUNT.get_rate_limit()      
         
@@ -160,11 +160,18 @@ class GithubOverview(gh):
         return (current_date - last_update).days
 
     def get_repo_has_vuln(self, repo):    
-        valid_alert= False
-        for alert in self.safe_query_execute(repo.get_notifications):
-            valid_alert = "bump" in alert.subject.title or "vulnerabilities" in alert.subject.title
+        url = 'https://api.github.com/graphql'
+        query =  '{repository(name: "%s", owner: "%s") {vulnerabilityAlerts(first: 100) \
+        {nodes {createdAt dismissedAt securityVulnerability {package {name}advisory {description}}}}}}' % (repo.name, self.ORG_NAME)
+        data = { 'query' : query }
+        headers = {'Authorization': 'token %s' % self.GH_TOKEN}
 
-        return valid_alert
+        try:
+            return len([vuln['securityVulnerability'] for vuln in post(url=url, json=data, headers=headers).json()['data']['repository']['vulnerabilityAlerts']['nodes']])
+        except Exception as e:
+            print(e)
+            
+        return None
 
     def safe_query_execute(self, action, **kargs):
         try:
