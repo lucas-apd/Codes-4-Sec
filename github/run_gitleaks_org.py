@@ -13,8 +13,6 @@
 from github import Github as gh
 from github import GithubException
 from os import getenv, popen, path, getcwd
-from requests import get
-from datetime import date
 from time import sleep
 from argparse import ArgumentParser
 
