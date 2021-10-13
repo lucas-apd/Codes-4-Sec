@@ -20,9 +20,7 @@ from argparse import ArgumentParser
 class RunGitLeaksOrg(gh):
     
     def __init__(self):
-        
         parser = ArgumentParser()
-
         parser.add_argument(
             '-o',
             '--orgname',
