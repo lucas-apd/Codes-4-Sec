@@ -8,7 +8,7 @@
 # chmod +x gitleaks && \
 # sudo mv gitleaks /usr/local/bin/
 # export GIT_TOKEN='YourGitTokenHere'
-# run_gitleaks_org.py -o orgname 
+# python3 run_gitleaks_org.py -o orgname 
 
 from github import Github as gh
 from github import GithubException
