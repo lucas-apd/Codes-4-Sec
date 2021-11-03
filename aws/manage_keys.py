@@ -77,7 +77,7 @@ def rotate_key(iamuser, access_key):
 def disable_key(access_key, iamuser):
     iam.update_access_key(UserName=iamuser, AccessKeyId=access_key, Status="Inactive")
     print ("\n Access Key " + access_key + " has been disabled.\n")
-    choice_key()
+    choice_key(iamuser)
 
 def delete_key(access_key, iamuser):
     a = ''
