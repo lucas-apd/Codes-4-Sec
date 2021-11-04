@@ -1,6 +1,16 @@
 name: Security Pipeline
 description: 'Perform security tests'
 
+inputs:
+  gh_secret_access_key:
+    description: 'GitHub Token'
+    default: '.'
+    required: true
+  sonar_token:
+    description: 'Sonarcloud deploy Token'
+    default: ""
+    required: true
+
 runs:
   using: "composite"
 
@@ -9,12 +19,21 @@ runs:
     - name: gitleaks-action
       uses: zricethezav/gitleaks-action@master
     
+    # https://github.com/marketplace/actions/sonarcloud-scan
+    #- name: SonarCloud Scan
+     # uses: sonarsource/sonarcloud-github-action@master
+      #env:
+       # GITHUB_TOKEN: ${{ inputs.gh_secret_access_key }}
+        #SONAR_TOKEN: ${{ inputs.sonar_token }}
+     
     # https://github.com/marketplace/actions/anchore-container-scan
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
+      if: hashFiles('Dockerfile') != ''
 
     - name: build local container
       uses: docker/build-push-action@v2
+      if: hashFiles('Dockerfile') != ''
       with:
         tags: localbuild/testimage:latest
         push: false
@@ -22,6 +41,7 @@ runs:
 
     - name: Scan image
       uses: anchore/scan-action@v3
+      if: hashFiles('Dockerfile') != ''
       with:
         image: "localbuild/testimage:latest"
         fail-build: true
@@ -29,5 +49,6 @@ runs:
         
     - name: Scan current project
       uses: anchore/scan-action@v3
+      if: hashFiles('Dockerfile') != ''
       with:
         path: "."
