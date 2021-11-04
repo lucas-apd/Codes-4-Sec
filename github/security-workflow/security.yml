@@ -1,0 +1,22 @@
+name: Security Pipeline
+on: [push, pull_request]
+ 
+jobs:
+  scans:
+    name: security-tests
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v2
+       with:
+        fetch-depth: '5'
+        
+     - name: Checkout deployment repo
+       uses: actions/checkout@v2
+       with:
+         repository: ORGNAME/REPO # ORGNAME/REPO with action file
+         ssh-key: ${{ secrets.GH_SECRET_ACCESS_KEY }} # Organization ENV VAR
+         path: '.github/REPO' # REPO with action file
+          
+     - name: gitleaks-action
+       uses: ./.github/REPO/PATH # REPO and PATH to action file
