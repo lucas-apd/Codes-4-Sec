@@ -18,5 +18,5 @@ jobs:
          ssh-key: ${{ secrets.GH_SECRET_ACCESS_KEY }} # Organization ENV VAR
          path: '.github/REPO' # REPO with action file
           
-     - name: run-security-scans
+     - name: security-scans
        uses: ./.github/REPO/PATH # REPO and PATH to action file
